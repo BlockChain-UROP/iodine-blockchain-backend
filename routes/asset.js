@@ -1,9 +1,9 @@
 var express = require('express');
 var router = express.Router();
 
-router.get('/info', function(req, res, next) {
-    res.send('API entry to get asset info');
-});
+var AssetController = require('../controllers/AssetController');
+
+router.get('/info', AssetController.info);
 
 router.get('/update', function(req, res, next) {
     res.send('API entry to update asset info (e.g. status)');
