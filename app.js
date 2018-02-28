@@ -10,6 +10,19 @@ var index = require('./routes/index');
 var assetRouter = require('./routes/asset');
 
 
+// // Libraries
+// var Web3 = require('web3');
+// var web3 = new Web3();
+// // var contract = require("truffle-contract");
+
+// // Web3 Provider
+// if (typeof web3 !== 'undefined') {
+//     web3 = new Web3(web3.currentProvider);
+// } else {
+//     web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
+// }
+
+// Middlewares
 var app = express();
 
 // view engine setup
