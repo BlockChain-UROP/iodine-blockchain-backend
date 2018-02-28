@@ -5,16 +5,10 @@ var AssetController = require('../controllers/AssetController');
 
 router.get('/info', AssetController.info);
 
-router.get('/update', function(req, res, next) {
-    res.send('API entry to update asset info (e.g. status)');
-});
+router.get('/update', AssetController.update);
 
-router.get('/transfer', function(req, res, next) {
-    res.send('API entry to transfer asset ownership');
-});
+router.get('/transfer', AssetController.transfer);
 
-router.get('/publish', function(req, res, next) {
-    res.send('API entry to add new asset');
-});
+router.get('/publish', AssetController.publish);
 
 module.exports = router;

@@ -13,6 +13,17 @@
 
 
 exports.info = function(req, res) {
-    // console.log("info");
     res.send("info is here");
+};
+
+exports.update = function(req, res) {
+    res.send("update is here");
+};
+
+exports.transfer = function(req, res) {
+    res.send("transfer is here");
+};
+
+exports.publish = function(req, res) {
+    res.send("publish is here");
 };
