@@ -1,30 +1,30 @@
 // Libraries
 var Web3 = require('web3');
-var web3 = new Web3();
-var contract = require("truffle-contract");
+// var web3 = new Web3();
+// const web3 = new Web3(new Web3.providers.HttpProvider("http://127.0.0.1:8545"));
+
+var web3 = new Web3(new Web3.providers.HttpProvider('https://ropsten.infura.io/'));
+
+var TruffleContract = require("truffle-contract");
 
 // Web3 Provider
-if (typeof web3 !== 'undefined') {
-    web3 = new Web3(web3.currentProvider);
-} else {
-    web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
-}
+// if (typeof web3 !== 'undefined') {
+//     web3 = new Web3(web3.currentProvider);
+// } else {
+//     web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
+// }
 
 var custodianArtifacts = require('../build/contracts/Custodian.json');
-var Custodian = contract(custodianArtifacts);
+var Custodian = new TruffleContract(custodianArtifacts);
 
-// Libraries
-// import { default as Web3 } from 'web3';
-// import { default as contract } from 'truffle-contract'
+// Set Provider
+Custodian.setProvider(web3);
+
 
 // Initialization
 // var accounts;
 var CUSTODIAN_CONTRACT_ADDRESS = "0xaba35ced931aa5dd9edcad3457c984b056d4f0ad";
 
-// Import contract artifacts
-// import custodianArtifacts from '../build/contracts/Custodian.json';
-
-// var Custodian = contract(custodianArtifacts);
 
 var test_account = "0x9BDe18763610E7beEE45F522B641F156D538d901";
 
@@ -32,9 +32,16 @@ exports.info = function(req, res) {
     // console.log(typeof web3);
     // console.log(Custodian);
 
+    // console.log(web3);
+    // console.log(Custodian.at(CUSTODIAN_CONTRACT_ADDRESS).then);
+
+    // Custodian
 
 
-
+    // Custodian.at(CUSTODIAN_CONTRACT_ADDRESS).then(function(instance) {
+    //     instance.setProvider
+    //     console.log(instance);
+    // });
 
     Custodian.at(CUSTODIAN_CONTRACT_ADDRESS).then(function(instance) {
         console.log(instance);
