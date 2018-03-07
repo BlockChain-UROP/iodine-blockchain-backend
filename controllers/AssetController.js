@@ -17,8 +17,17 @@ var TruffleContract = require("truffle-contract");
 var custodianArtifacts = require('../build/contracts/Custodian.json');
 var Custodian = new TruffleContract(custodianArtifacts);
 
-// Set Provider
-Custodian.setProvider(web3);
+// Set Provider 
+Custodian.setProvider(web3.currentProvider);
+
+// Solve Apply Issue (https://github.com/trufflesuite/truffle-contract/issues/57)
+if (typeof Custodian.currentProvider.sendAsync !== "function") {
+    Custodian.currentProvider.sendAsync = function() {
+        return Custodian.currentProvider.send.apply(
+            Custodian.currentProvider, arguments
+        );
+    };
+}
 
 
 // Initialization
@@ -44,7 +53,7 @@ exports.info = function(req, res) {
     // });
 
     Custodian.at(CUSTODIAN_CONTRACT_ADDRESS).then(function(instance) {
-        console.log(instance);
+        // console.log(instance);
         return instance.getSeed({from: test_account});
       }).then(function(result){
           console.log("Result: " + result);
