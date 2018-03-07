@@ -5,13 +5,6 @@ var web3 = new Web3(new Web3.providers.HttpProvider('https://ropsten.infura.io/l
 
 var TruffleContract = require("truffle-contract");
 
-// Web3 Provider
-// if (typeof web3 !== 'undefined') {
-//     web3 = new Web3(web3.currentProvider);
-// } else {
-//     web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
-// }
-
 var custodianArtifacts = require('../build/contracts/Custodian.json');
 var Custodian = new TruffleContract(custodianArtifacts);
 
@@ -30,56 +23,28 @@ if (typeof Custodian.currentProvider.sendAsync !== "function") {
 
 // Initialization
 // var accounts;
-var CUSTODIAN_CONTRACT_ADDRESS = "0xaba35ced931aa5dd9edcad3457c984b056d4f0ad";
+var CUSTODIAN_CONTRACT_ADDRESS = "0x71e923ee401e9604d3ae9cd0945b91bc613a6708";
 
 
 var test_account = "0x9BDe18763610E7beEE45F522B641F156D538d901";
 
-exports.info = function(req, res) {
+exports.info = async function(req, res) {
 
+    try {
+        // Get Seed
+        var instance = await Custodian.at(CUSTODIAN_CONTRACT_ADDRESS);
+        console.log(instance);
+        var seed = await instance.getSeed({from: test_account});
 
-    // Get Seed
-    Custodian.at(CUSTODIAN_CONTRACT_ADDRESS).then(function(instance) {
-        return instance.getSeed({from: test_account});
-    }).then(function(result){
-        console.log("Result: " + result);
-    }).catch(function(err) {
-        console.log("ERROR! " + err.message);
-    });
+        var client = await instance.createClient({from: test_account});
+        console.log(client);
 
-    Custodian.at(CUSTODIAN_CONTRACT_ADDRESS).then(function(instance) {
-        instance.createClient({from: test_account});
-        return instance.volume.call();
-    }).then(function(result){
-        console.log("Volume: " + result);
-    }).catch(function(err) {
-        console.log("ERROR! " + err.message);
-    });
+        var volume = await instance.volume.call({from: test_account});
+        console.log(volume);
 
-
-    
-    // Custodian.at(CUSTODIAN_CONTRACT_ADDRESS).then(async function(instance) {
-    //     var hi = await web3.eth.getBalance(test_account);
-    //     console.log(hi)
-    //     var client = await instance.createClient({from: test_account});
-    //     console.log(client)
-    // }).catch(function(err) {
-    //     console.log("ERROR! " + err.message);
-    // });
-    // }).then(function(result){
-    //     console.log("Client Address: " + result);
-    // }).catch(function(err) {
-    //     console.log("ERROR! " + err.message);
-    // });
-
-
-
-
-
-
-
-
-
+    } catch (error) {
+        console.error(error);
+    }
 
     res.send("info is here");
 };
