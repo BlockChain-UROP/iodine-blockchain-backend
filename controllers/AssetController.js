@@ -1,9 +1,7 @@
 // Libraries
 var Web3 = require('web3');
-// var web3 = new Web3();
-// const web3 = new Web3(new Web3.providers.HttpProvider("http://127.0.0.1:8545"));
 
-var web3 = new Web3(new Web3.providers.HttpProvider('https://ropsten.infura.io/'));
+var web3 = new Web3(new Web3.providers.HttpProvider('https://ropsten.infura.io/lMgQfS5DDh31T0z6iD5E'));
 
 var TruffleContract = require("truffle-contract");
 
@@ -38,29 +36,41 @@ var CUSTODIAN_CONTRACT_ADDRESS = "0xaba35ced931aa5dd9edcad3457c984b056d4f0ad";
 var test_account = "0x9BDe18763610E7beEE45F522B641F156D538d901";
 
 exports.info = function(req, res) {
-    // console.log(typeof web3);
-    // console.log(Custodian);
-
-    // console.log(web3);
-    // console.log(Custodian.at(CUSTODIAN_CONTRACT_ADDRESS).then);
-
-    // Custodian
 
 
-    // Custodian.at(CUSTODIAN_CONTRACT_ADDRESS).then(function(instance) {
-    //     instance.setProvider
-    //     console.log(instance);
-    // });
+    // Get Seed
+    Custodian.at(CUSTODIAN_CONTRACT_ADDRESS).then(function(instance) {
+        return instance.getSeed({from: test_account});
+    }).then(function(result){
+        console.log("Result: " + result);
+    }).catch(function(err) {
+        console.log("ERROR! " + err.message);
+    });
 
     Custodian.at(CUSTODIAN_CONTRACT_ADDRESS).then(function(instance) {
-        // console.log(instance);
-        return instance.getSeed({from: test_account});
-      }).then(function(result){
-          console.log("Result: " + result);
-      }).catch(function(err) {
+        instance.createClient({from: test_account});
+        return instance.volume.call();
+    }).then(function(result){
+        console.log("Volume: " + result);
+    }).catch(function(err) {
         console.log("ERROR! " + err.message);
-      });
+    });
 
+
+    
+    // Custodian.at(CUSTODIAN_CONTRACT_ADDRESS).then(async function(instance) {
+    //     var hi = await web3.eth.getBalance(test_account);
+    //     console.log(hi)
+    //     var client = await instance.createClient({from: test_account});
+    //     console.log(client)
+    // }).catch(function(err) {
+    //     console.log("ERROR! " + err.message);
+    // });
+    // }).then(function(result){
+    //     console.log("Client Address: " + result);
+    // }).catch(function(err) {
+    //     console.log("ERROR! " + err.message);
+    // });
 
 
 
