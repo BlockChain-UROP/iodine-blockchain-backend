@@ -3,7 +3,10 @@ var router = express.Router();
 
 var AssetController = require('../controllers/AssetController');
 
-router.get('/info', AssetController.info);
+// Get ID, Address and Seed
+router.get('/info/:id', AssetController.info);
+
+router.get('/test', AssetController.test);
 
 router.get('/update', AssetController.update);
 

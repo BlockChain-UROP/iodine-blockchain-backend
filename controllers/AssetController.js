@@ -21,6 +21,7 @@ var Client = new TruffleContract(clientArtifacts);
 
 // Set Provider 
 Custodian.setProvider(web3.currentProvider);
+Client.setProvider(web3.currentProvider);
 
 // Solve Apply Issue (https://github.com/trufflesuite/truffle-contract/issues/57)
 if (typeof Custodian.currentProvider.sendAsync !== "function") {
@@ -38,15 +39,13 @@ var CUSTODIAN_CONTRACT_ADDRESS = "0xFDe186Ddb09ef7b83FD997CC5a7461E8E8af56C9";
 var test_account = "0x5ff2c17ada131e5d9fa0f927395abe35657e4768";
 
 
-
-exports.info = async function(req, res) {
-
+exports.test = async function(req, res) {
     try {
-        // web3.eth.getAccounts((err, res) => { console.log(res); });
+        web3.eth.getAccounts((err, res) => { console.log(res); });
 
         // Get Instance
         var custodianInstance = await Custodian.at(CUSTODIAN_CONTRACT_ADDRESS);
-        console.log("instance");
+        console.log("instance is ok");
 
         // Get Seed
         var seed = await custodianInstance.getSeed({from: test_account});
@@ -57,12 +56,37 @@ exports.info = async function(req, res) {
         var clientId = receipt.logs[0].args.id.toNumber();
         var clientAddress = receipt.logs[0].args.newAddress;
         var clientInstance = Client.at(clientAddress);
-        console.log(clientInstance);
+        console.log(clientInstance); 
 
         // Get Volume
         var volume = await custodianInstance.volume.call({from: test_account});
         console.log("volume:", volume.toNumber());
 
+    } catch (error) {
+        console.error(error);
+    }
+
+    res.send("test is here");
+};
+
+exports.info = async function(req, res) {
+
+    try {
+        var custodianInstance = await Custodian.at(CUSTODIAN_CONTRACT_ADDRESS);
+        console.log("instance is ok");
+
+        var clientId = req.params.id;
+        console.log(clientId);
+
+        var clientAddress = await custodianInstance.getClientAddrByID(clientId, {from: test_account});
+        console.log(clientAddress);
+
+        var clientInstance = Client.at(clientAddress);
+        console.log("client is ok");
+
+        var clientSeed = await clientInstance.getSeed({from: test_account});
+        console.log(clientSeed.toNumber());
+        
     } catch (error) {
         console.error(error);
     }
