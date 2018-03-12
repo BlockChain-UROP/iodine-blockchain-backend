@@ -14,7 +14,10 @@ var web3 = new Web3(provider);
 var TruffleContract = require("truffle-contract");
 
 var custodianArtifacts = require('../build/contracts/Custodian.json');
+var clientArtifacts = require('../build/contracts/Client.json');
+
 var Custodian = new TruffleContract(custodianArtifacts);
+var Client = new TruffleContract(clientArtifacts);
 
 // Set Provider 
 Custodian.setProvider(web3.currentProvider);
@@ -39,25 +42,26 @@ var test_account = "0x5ff2c17ada131e5d9fa0f927395abe35657e4768";
 exports.info = async function(req, res) {
 
     try {
-        // let accounts = [];
-        web3.eth.getAccounts((err, res) => {
-            console.log(res);
-        });
-        // console.log(accounts);
-        // await web3.personal.unlockAccount(test_account, "Pass0970");
+        // web3.eth.getAccounts((err, res) => { console.log(res); });
 
+        // Get Instance
+        var custodianInstance = await Custodian.at(CUSTODIAN_CONTRACT_ADDRESS);
+        console.log("instance");
 
         // Get Seed
-        var instance = await Custodian.at(CUSTODIAN_CONTRACT_ADDRESS);
-        console.log("instance");
-        var seed = await instance.getSeed({from: test_account});
-        console.log("seed", seed);
+        var seed = await custodianInstance.getSeed({from: test_account});
+        console.log("seed:", seed.toNumber());
 
-        var client = await instance.createClient({from: test_account});
-        console.log(client);
+        // Create Client
+        var receipt = await custodianInstance.createClient({from: test_account});
+        var clientId = receipt.logs[0].args.id.toNumber();
+        var clientAddress = receipt.logs[0].args.newAddress;
+        var clientInstance = Client.at(clientAddress);
+        console.log(clientInstance);
 
-        var volume = await instance.volume.call({from: test_account});
-        console.log("volume", volume);
+        // Get Volume
+        var volume = await custodianInstance.volume.call({from: test_account});
+        console.log("volume:", volume.toNumber());
 
     } catch (error) {
         console.error(error);
