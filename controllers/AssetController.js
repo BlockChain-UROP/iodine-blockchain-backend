@@ -71,6 +71,8 @@ exports.test = async function(req, res) {
 
 exports.info = async function(req, res) {
 
+    var response = {};
+
     try {
         var custodianInstance = await Custodian.at(CUSTODIAN_CONTRACT_ADDRESS);
         console.log("instance is ok");
@@ -86,12 +88,23 @@ exports.info = async function(req, res) {
 
         var clientSeed = await clientInstance.getSeed({from: test_account});
         console.log(clientSeed.toNumber());
+
+        response = {
+            "client": {
+                "id": clientId,
+                "address": clientAddress,
+                "seed": clientSeed
+            }
+        }
         
     } catch (error) {
         console.error(error);
+        response = {
+            "error": error
+        }
     }
 
-    res.send("info is here");
+    res.send(response);
 };
 
 exports.update = function(req, res) {
