@@ -12,6 +12,6 @@ router.post('/update', AssetController.update)
 
 router.post('/transfer', AssetController.transfer);
 
-router.get('/publish', AssetController.publish);
+router.post('/publish', AssetController.publish);
 
 module.exports = router;

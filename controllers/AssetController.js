@@ -200,5 +200,40 @@ exports.transfer = async function(req, res) {
 };
 
 exports.publish = async function(req, res) {
-    res.send("publish is here");
+
+    var response = {};
+
+    try {
+        var custodianInstance = await Custodian.at(CUSTODIAN_CONTRACT_ADDRESS);
+        console.log("instance is ok");
+
+        var assetName = req.body.name;
+        console.log(assetName);
+
+        var assetStatus = req.body.status;
+        console.log(assetStatus);
+
+        var assetAvail = req.body.avail;
+        console.log(assetAvail);
+
+        // Publish Asset
+        var receipt = await custodianInstance.publishAsset(assetName, assetStatus, assetAvail, {from: test_account});
+        var assetId = receipt.logs[0].args.id.toNumber();
+        var assetAddress = receipt.logs[0].args.newAddress;
+        var assetInstance = Asset.at(assetAddress);
+        console.log(assetInstance); 
+
+        response = {
+            "message": "success"
+        };
+
+    } catch (error) {
+        console.error(error);
+        response = {
+            "error": error
+        };
+    }
+
+    res.send(response);
+
 };
