@@ -119,13 +119,13 @@ exports.info = async function(req, res) {
     res.send(response);
 };
 
-exports.update = function(req, res) {
+exports.update = async function(req, res) {
 
     var response = {};
 
     try {
-        // var custodianInstance = await Custodian.at(CUSTODIAN_CONTRACT_ADDRESS);
-        // console.log("instance is ok");
+        var custodianInstance = await Custodian.at(CUSTODIAN_CONTRACT_ADDRESS);
+        console.log("instance is ok");
 
         var assetId = req.body.id;
         console.log(assetId);
@@ -170,10 +170,10 @@ exports.update = function(req, res) {
     res.send(response);
 };
 
-exports.transfer = function(req, res) {
+exports.transfer = async function(req, res) {
     res.send("transfer is here");
 };
 
-exports.publish = function(req, res) {
+exports.publish = async function(req, res) {
     res.send("publish is here");
 };
