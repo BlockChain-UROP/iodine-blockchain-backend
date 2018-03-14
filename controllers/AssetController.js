@@ -121,9 +121,53 @@ exports.info = async function(req, res) {
 
 exports.update = function(req, res) {
 
-    
+    var response = {};
 
-    res.send("update is here");
+    try {
+        // var custodianInstance = await Custodian.at(CUSTODIAN_CONTRACT_ADDRESS);
+        // console.log("instance is ok");
+
+        var assetId = req.body.id;
+        console.log(assetId);
+
+        var newStatus = req.body.status;
+        console.log(newStatus);
+
+        // var assetAddress = await custodianInstance.getAssetAddrByID(assetId, {from: test_account});
+        // console.log(assetAddress);
+
+        // var assetInstance = Asset.at(assetAddress);
+        // console.log("asset is ok");
+
+        // var assetName = await assetInstance.name.call({from: test_account});
+        // console.log(assetName);
+
+        // var assetStatus = await assetInstance.status.call({from: test_account});
+        // console.log(assetStatus);
+
+        // var assetAvail = await assetInstance.avail.call({from: test_account});
+        // console.log(assetAvail);
+
+        // response = {
+        //     "asset": {
+        //         "id": assetId,
+        //         "address": assetAddress,
+        //         "name": assetName,
+        //         "status": assetStatus,
+        //         "avail": assetAvail
+        //     }
+        // }
+
+        response = "success";
+        
+    } catch (error) {
+        console.error(error);
+        response = {
+            "error": error
+        }
+    }
+
+    res.send(response);
 };
 
 exports.transfer = function(req, res) {

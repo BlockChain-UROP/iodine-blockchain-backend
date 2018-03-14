@@ -8,7 +8,7 @@ router.get('/info/:id', AssetController.info);
 
 router.get('/test', AssetController.test);
 
-router.get('/update', AssetController.update);
+router.post('/update', AssetController.update)
 
 router.get('/transfer', AssetController.transfer);
 
