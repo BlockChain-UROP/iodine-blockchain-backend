@@ -14,14 +14,17 @@ var web3 = new Web3(provider);
 var TruffleContract = require("truffle-contract");
 
 var custodianArtifacts = require('../build/contracts/Custodian.json');
-var clientArtifacts = require('../build/contracts/Client.json');
+var assetArtifacts = require('../build/contracts/Asset.json');
+// var clientArtifacts = require('../build/contracts/Client.json');
 
 var Custodian = new TruffleContract(custodianArtifacts);
-var Client = new TruffleContract(clientArtifacts);
+var Asset = new TruffleContract(assetArtifacts);
+// var Client = new TruffleContract(clientArtifacts);
 
 // Set Provider 
 Custodian.setProvider(web3.currentProvider);
-Client.setProvider(web3.currentProvider);
+Asset.setProvider(web3.currentProvider);
+// Client.setProvider(web3.currentProvider);
 
 // Solve Apply Issue (https://github.com/trufflesuite/truffle-contract/issues/57)
 if (typeof Custodian.currentProvider.sendAsync !== "function") {
@@ -35,7 +38,8 @@ if (typeof Custodian.currentProvider.sendAsync !== "function") {
 
 // Initialization
 // var accounts;
-var CUSTODIAN_CONTRACT_ADDRESS = "0xFDe186Ddb09ef7b83FD997CC5a7461E8E8af56C9";
+// var CUSTODIAN_CONTRACT_ADDRESS = "0xFDe186Ddb09ef7b83FD997CC5a7461E8E8af56C9";
+var CUSTODIAN_CONTRACT_ADDRESS = "0x920ea33c9af011a74ddac700e9c6884ee035c06b";
 var test_account = "0x5ff2c17ada131e5d9fa0f927395abe35657e4768";
 
 
@@ -47,16 +51,16 @@ exports.test = async function(req, res) {
         var custodianInstance = await Custodian.at(CUSTODIAN_CONTRACT_ADDRESS);
         console.log("instance is ok");
 
-        // Get Seed
-        var seed = await custodianInstance.getSeed({from: test_account});
-        console.log("seed:", seed.toNumber());
+        // Create Asset
+        var receipt = await custodianInstance.publishAsset("Test Asset", "Extremely good condition", true, {from: test_account});
+        var assetId = receipt.logs[0].args.id.toNumber();
+        var assetAddress = receipt.logs[0].args.newAddress;
+        var assetInstance = Asset.at(assetAddress);
+        console.log(assetInstance); 
 
-        // Create Client
-        var receipt = await custodianInstance.createClient({from: test_account});
-        var clientId = receipt.logs[0].args.id.toNumber();
-        var clientAddress = receipt.logs[0].args.newAddress;
-        var clientInstance = Client.at(clientAddress);
-        console.log(clientInstance); 
+        // Get Asset Name
+        var assetName = await assetInstance.name.call({from: test_account});
+        console.log("Asset Name: ", assetName);
 
         // Get Volume
         var volume = await custodianInstance.volume.call({from: test_account});
@@ -77,23 +81,31 @@ exports.info = async function(req, res) {
         var custodianInstance = await Custodian.at(CUSTODIAN_CONTRACT_ADDRESS);
         console.log("instance is ok");
 
-        var clientId = req.params.id;
-        console.log(clientId);
+        var assetId = req.params.id;
+        console.log(assetId);
 
-        var clientAddress = await custodianInstance.getClientAddrByID(clientId, {from: test_account});
-        console.log(clientAddress);
+        var assetAddress = await custodianInstance.getAssetAddrByID(assetId, {from: test_account});
+        console.log(assetAddress);
 
-        var clientInstance = Client.at(clientAddress);
-        console.log("client is ok");
+        var assetInstance = Asset.at(assetAddress);
+        console.log("asset is ok");
 
-        var clientSeed = await clientInstance.getSeed({from: test_account});
-        console.log(clientSeed.toNumber());
+        var assetName = await assetInstance.name.call({from: test_account});
+        console.log(assetName);
+
+        var assetStatus = await assetInstance.status.call({from: test_account});
+        console.log(assetStatus);
+
+        var assetAvail = await assetInstance.avail.call({from: test_account});
+        console.log(assetAvail);
 
         response = {
-            "client": {
-                "id": clientId,
-                "address": clientAddress,
-                "seed": clientSeed
+            "asset": {
+                "id": assetId,
+                "address": assetAddress,
+                "name": assetName,
+                "status": assetStatus,
+                "avail": assetAvail
             }
         }
         
