@@ -10,7 +10,7 @@ router.get('/test', AssetController.test);
 
 router.post('/update', AssetController.update)
 
-router.get('/transfer', AssetController.transfer);
+router.post('/transfer', AssetController.transfer);
 
 router.get('/publish', AssetController.publish);
 

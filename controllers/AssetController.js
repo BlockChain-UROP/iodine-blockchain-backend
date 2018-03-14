@@ -99,13 +99,21 @@ exports.info = async function(req, res) {
         var assetAvail = await assetInstance.avail.call({from: test_account});
         console.log(assetAvail);
 
+        var assetHolder = await assetInstance.holder.call({from: test_account});
+        console.log(assetHolder);
+
+        var assetPublisher = await assetInstance.publisher.call({from: test_account});
+        console.log(assetPublisher);
+
         response = {
             "asset": {
                 "id": assetId,
                 "address": assetAddress,
                 "name": assetName,
                 "status": assetStatus,
-                "avail": assetAvail
+                "avail": assetAvail,
+                "holder": assetHolder,
+                "publisher": assetPublisher
             }
         }
         
@@ -131,34 +139,19 @@ exports.update = async function(req, res) {
         console.log(assetId);
 
         var newStatus = req.body.status;
-        console.log(newStatus);
+        console.log("Received: ", newStatus);
 
-        // var assetAddress = await custodianInstance.getAssetAddrByID(assetId, {from: test_account});
-        // console.log(assetAddress);
+        var assetAddress = await custodianInstance.getAssetAddrByID(assetId, {from: test_account});
+        console.log(assetAddress);
 
-        // var assetInstance = Asset.at(assetAddress);
-        // console.log("asset is ok");
+        var assetInstance = Asset.at(assetAddress);
+        console.log("asset is ok");
 
-        // var assetName = await assetInstance.name.call({from: test_account});
-        // console.log(assetName);
+        await assetInstance.updateStatus(newStatus, {from: test_account});
 
-        // var assetStatus = await assetInstance.status.call({from: test_account});
-        // console.log(assetStatus);
-
-        // var assetAvail = await assetInstance.avail.call({from: test_account});
-        // console.log(assetAvail);
-
-        // response = {
-        //     "asset": {
-        //         "id": assetId,
-        //         "address": assetAddress,
-        //         "name": assetName,
-        //         "status": assetStatus,
-        //         "avail": assetAvail
-        //     }
-        // }
-
-        response = "success";
+        response = {
+            "message": "success"
+        }
         
     } catch (error) {
         console.error(error);
@@ -171,7 +164,39 @@ exports.update = async function(req, res) {
 };
 
 exports.transfer = async function(req, res) {
-    res.send("transfer is here");
+
+    var response = {};
+
+    try {
+        var custodianInstance = await Custodian.at(CUSTODIAN_CONTRACT_ADDRESS);
+        console.log("instance is ok");
+
+        var assetId = req.body.id;
+        console.log(assetId);
+
+        var receiver = req.body.receiver;
+        console.log(receiver);
+
+        var assetAddress = await custodianInstance.getAssetAddrByID(assetId, {from: test_account});
+        console.log(assetAddress);
+
+        var assetInstance = Asset.at(assetAddress);
+        console.log("asset is ok");
+
+        await assetInstance.transfer(receiver, {from: test_account});
+
+        response = {
+            "message": "success"
+        }
+        
+    } catch (error) {
+        console.error(error);
+        response = {
+            "error": error
+        }
+    }
+
+    res.send(response);
 };
 
 exports.publish = async function(req, res) {
