@@ -10,7 +10,7 @@
 `POST http://localhost:3000/asset/update`
 ```
 id: <asset-ID>,
-status: "new status"
+condition: "new condition"
 ```
 ### Transfer
 `POST http://localhost:3000/asset/transfer`
@@ -22,6 +22,6 @@ receiver: <receiver-address>,
 `POST http://localhost:3000/asset/publish`
 ```
 name: "Apple",
-status: "Fresh and juicy",
-avail: true
+condition: "Fresh and juicy",
+avail: 0    // 0: available, 1: unavailable, 2: removed
 ```
