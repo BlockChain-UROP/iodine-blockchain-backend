@@ -93,10 +93,10 @@ exports.info = async function(req, res) {
         var assetName = await assetInstance.name.call({from: test_account});
         console.log(assetName);
 
-        var assetStatus = await assetInstance.status.call({from: test_account});
-        console.log(assetStatus);
+        var assetCondition = await assetInstance.condition.call({from: test_account});
+        console.log(assetCondition);
 
-        var assetAvail = await assetInstance.avail.call({from: test_account});
+        var assetAvail = await assetInstance.availStatusID.call({from: test_account});
         console.log(assetAvail);
 
         var assetHolder = await assetInstance.holder.call({from: test_account});
@@ -110,7 +110,7 @@ exports.info = async function(req, res) {
                 "id": assetId,
                 "address": assetAddress,
                 "name": assetName,
-                "status": assetStatus,
+                "condition": assetCondition,
                 "avail": assetAvail,
                 "holder": assetHolder,
                 "publisher": assetPublisher
