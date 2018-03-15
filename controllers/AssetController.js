@@ -210,21 +210,21 @@ exports.publish = async function(req, res) {
         var assetName = req.body.name;
         console.log(assetName);
 
-        var assetStatus = req.body.status;
-        console.log(assetStatus);
+        var assetCondition = req.body.condition;
+        console.log(assetCondition);
 
         var assetAvail = req.body.avail;
         console.log(assetAvail);
 
         // Publish Asset
-        var receipt = await custodianInstance.publishAsset(assetName, assetStatus, assetAvail, {from: test_account});
+        var receipt = await custodianInstance.publishAsset(assetName, assetCondition, assetAvail, {from: test_account});
         var assetId = receipt.logs[0].args.id.toNumber();
         var assetAddress = receipt.logs[0].args.newAddress;
         var assetInstance = Asset.at(assetAddress);
         console.log(assetInstance); 
 
         response = {
-            "message": "success"
+            "message": "Success: publish ID(" + assetId + ") address(" + assetAddress + ") name(" + assetName + ") condition(" + assetCondition + ") avail(" + assetAvail + ")"
         };
 
     } catch (error) {

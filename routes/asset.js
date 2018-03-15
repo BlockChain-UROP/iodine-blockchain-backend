@@ -14,4 +14,7 @@ router.post('/transfer', AssetController.transfer);
 
 router.post('/publish', AssetController.publish);
 
+// TODO:
+// /remove and /updateAvail
+
 module.exports = router;
