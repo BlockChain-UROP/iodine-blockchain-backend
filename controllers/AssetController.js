@@ -39,7 +39,7 @@ if (typeof Custodian.currentProvider.sendAsync !== "function") {
 // Initialization
 // var accounts;
 // var CUSTODIAN_CONTRACT_ADDRESS = "0xFDe186Ddb09ef7b83FD997CC5a7461E8E8af56C9";
-var CUSTODIAN_CONTRACT_ADDRESS = "0x920ea33c9af011a74ddac700e9c6884ee035c06b";
+var CUSTODIAN_CONTRACT_ADDRESS = "0x5279770d33129df7e0a659d3566fd9912ccf665a";
 var test_account = "0x5ff2c17ada131e5d9fa0f927395abe35657e4768";
 
 
@@ -52,7 +52,7 @@ exports.test = async function(req, res) {
         console.log("instance is ok");
 
         // Create Asset
-        var receipt = await custodianInstance.publishAsset("Test Asset", "Extremely good condition", true, {from: test_account});
+        var receipt = await custodianInstance.publishAsset("Test Asset", "Extremely good condition", 0, {from: test_account});
         var assetId = receipt.logs[0].args.id.toNumber();
         var assetAddress = receipt.logs[0].args.newAddress;
         var assetInstance = Asset.at(assetAddress);
@@ -93,11 +93,11 @@ exports.info = async function(req, res) {
         var assetName = await assetInstance.name.call({from: test_account});
         console.log(assetName);
 
-        var assetStatus = await assetInstance.status.call({from: test_account});
-        console.log(assetStatus);
+        var assetCondition = await assetInstance.condition.call({from: test_account});
+        console.log(assetCondition);
 
-        var assetAvail = await assetInstance.avail.call({from: test_account});
-        console.log(assetAvail);
+        var assetAvail = await assetInstance.availStatusID.call({from: test_account});
+        console.log(assetAvail.toNumber());
 
         var assetHolder = await assetInstance.holder.call({from: test_account});
         console.log(assetHolder);
@@ -110,7 +110,7 @@ exports.info = async function(req, res) {
                 "id": assetId,
                 "address": assetAddress,
                 "name": assetName,
-                "status": assetStatus,
+                "condition": assetCondition,
                 "avail": assetAvail,
                 "holder": assetHolder,
                 "publisher": assetPublisher
@@ -138,8 +138,8 @@ exports.update = async function(req, res) {
         var assetId = req.body.id;
         console.log(assetId);
 
-        var newStatus = req.body.status;
-        console.log("Received: ", newStatus);
+        var newCondition = req.body.condition;
+        console.log("Received: ", newCondition);
 
         var assetAddress = await custodianInstance.getAssetAddrByID(assetId, {from: test_account});
         console.log(assetAddress);
@@ -147,10 +147,10 @@ exports.update = async function(req, res) {
         var assetInstance = Asset.at(assetAddress);
         console.log("asset is ok");
 
-        await assetInstance.updateStatus(newStatus, {from: test_account});
+        await assetInstance.updateCondition(newCondition, {from: test_account});
 
         response = {
-            "message": "success"
+            "message": "Success: update ID(" + assetId + ") condition(" + newCondition + ")"
         }
         
     } catch (error) {
@@ -186,7 +186,7 @@ exports.transfer = async function(req, res) {
         await assetInstance.transfer(receiver, {from: test_account});
 
         response = {
-            "message": "success"
+            "message": "Success: transfer ID(" + assetId + ") receiver(" + receiver + ")"
         }
         
     } catch (error) {
@@ -210,21 +210,21 @@ exports.publish = async function(req, res) {
         var assetName = req.body.name;
         console.log(assetName);
 
-        var assetStatus = req.body.status;
-        console.log(assetStatus);
+        var assetCondition = req.body.condition;
+        console.log(assetCondition);
 
         var assetAvail = req.body.avail;
         console.log(assetAvail);
 
         // Publish Asset
-        var receipt = await custodianInstance.publishAsset(assetName, assetStatus, assetAvail, {from: test_account});
+        var receipt = await custodianInstance.publishAsset(assetName, assetCondition, assetAvail, {from: test_account});
         var assetId = receipt.logs[0].args.id.toNumber();
         var assetAddress = receipt.logs[0].args.newAddress;
         var assetInstance = Asset.at(assetAddress);
         console.log(assetInstance); 
 
         response = {
-            "message": "success"
+            "message": "Success: publish ID(" + assetId + ") address(" + assetAddress + ") name(" + assetName + ") condition(" + assetCondition + ") avail(" + assetAvail + ")"
         };
 
     } catch (error) {

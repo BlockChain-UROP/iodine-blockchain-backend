@@ -2,19 +2,23 @@ pragma solidity ^0.4.13;
 
 contract Asset {
     
+    // ######### Constants ######## //
+    
+    string[] public AVAILABILITY = ["available", "unavailable", "removed"];
+    
     // ######### Parameters ######## //
     
     string public name;
     address public publisher;
     address public holder;
-    string public status;
-    bool public avail;
+    string public condition;
+    uint8 public availStatusID; 
     
     // ######### Events ######## //
     
     event EventAssetPublishedAt(uint256 time, string name, address publisher);
     event EventAssetTransferredAt(uint256 time, string name, address newHolder);
-    event EventAssetUpdatedAt(uint256 time, string name, string status);
+    event EventAssetUpdatedAt(uint256 time, string name, string condition, string avail);
     event EventAssetRemovedAt(uint256 time, string name);
 
     // ######### Modifiers ######## //
@@ -29,24 +33,19 @@ contract Asset {
         _;
     } 
     
-    modifier onlyHolderOrPublisher(address sender){
-        require(sender == holder || sender == publisher);
-        _;
-    } 
-    
-    modifier isAvail(){
-        require(avail == true);
+    modifier onlyAvail(){
+        require(availStatusID == 0);
         _;
     }
 
     // ######### Constructor ######## //
     
-    function Asset(string _name, string _status, bool _avail, address _publisher) public {
+    function Asset(string _name, string _condition, uint8 _availStatusID, address _publisher) public {
         name = _name;
         publisher = _publisher;
         holder = _publisher;
-        status = _status;
-        avail = _avail;
+        condition = _condition;
+        availStatusID = _availStatusID;
         EventAssetPublishedAt(now, name, publisher);
     }
     
@@ -54,39 +53,33 @@ contract Asset {
     
     // Transfer //
 
-    function transfer(address _receiver) public onlyHolder(msg.sender) isAvail() {
+    function transfer(address _receiver) public onlyHolder(msg.sender) onlyAvail() {
         holder = _receiver;
         EventAssetTransferredAt(now, name, holder);
     }
 
     // Updator //
     
-    function updateStatus(string _status) public {
-        status = _status;
-        EventAssetUpdatedAt(now, name, status);
+    function updateCondition(string _condition) public {
+        condition = _condition;
+        EventAssetUpdatedAt(now, name, condition, AVAILABILITY[availStatusID]);
     }
     
     function updateName(string _name) public {
         name = _name;
-        EventAssetUpdatedAt(now, name, status);
+        EventAssetUpdatedAt(now, name, condition, AVAILABILITY[availStatusID]);
     }
     
-    // Setter //
-    
-    function setNotAvail() public onlyHolder(msg.sender) {
-        avail = false;
-    }
-    
-    function setAvail() public onlyHolder(msg.sender) {
-        avail = true;
+    function updateAvail(uint8 _availStatusID) public {
+        availStatusID = _availStatusID;
+        EventAssetUpdatedAt(now, name, condition, AVAILABILITY[availStatusID]);
     }
     
     // Remover //
     
     function remove() public onlyPublisher(msg.sender) {
-        avail = false;
+        availStatusID = 2;
         holder = publisher;
-        status = "Removed";
         EventAssetRemovedAt(now, name);
     }
 
