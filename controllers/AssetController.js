@@ -39,7 +39,7 @@ if (typeof Custodian.currentProvider.sendAsync !== "function") {
 // Initialization
 // var accounts;
 // var CUSTODIAN_CONTRACT_ADDRESS = "0xFDe186Ddb09ef7b83FD997CC5a7461E8E8af56C9";
-var CUSTODIAN_CONTRACT_ADDRESS = "0x920ea33c9af011a74ddac700e9c6884ee035c06b";
+var CUSTODIAN_CONTRACT_ADDRESS = "0x5279770d33129df7e0a659d3566fd9912ccf665a";
 var test_account = "0x5ff2c17ada131e5d9fa0f927395abe35657e4768";
 
 
@@ -52,7 +52,7 @@ exports.test = async function(req, res) {
         console.log("instance is ok");
 
         // Create Asset
-        var receipt = await custodianInstance.publishAsset("Test Asset", "Extremely good condition", true, {from: test_account});
+        var receipt = await custodianInstance.publishAsset("Test Asset", "Extremely good condition", 0, {from: test_account});
         var assetId = receipt.logs[0].args.id.toNumber();
         var assetAddress = receipt.logs[0].args.newAddress;
         var assetInstance = Asset.at(assetAddress);
