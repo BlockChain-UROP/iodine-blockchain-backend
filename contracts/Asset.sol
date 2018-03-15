@@ -4,11 +4,11 @@ contract Asset {
     
     // ######### Parameters ######## //
     
-    string public name;
     address public publisher;
     address public holder;
-    string public status;
-    bool public avail;
+    string public name;
+    string[] public status = ["NotAvailable", "Available", "Removed"];
+    uint8 public availStatusID; 
     
     // ######### Events ######## //
     
@@ -29,24 +29,19 @@ contract Asset {
         _;
     } 
     
-    modifier onlyHolderOrPublisher(address sender){
-        require(sender == holder || sender == publisher);
-        _;
-    } 
     
-    modifier isAvail(){
-        require(avail == true);
+    modifier onlyAvail(){
+        require(availStatusID == 1);
         _;
     }
 
     // ######### Constructor ######## //
     
-    function Asset(string _name, string _status, bool _avail, address _publisher) public {
-        name = _name;
+    function Asset(string _name, uint8 _availStatusID, address _publisher) public {
         publisher = _publisher;
         holder = _publisher;
-        status = _status;
-        avail = _avail;
+        name = _name;
+        availStatusID = _availStatusID;
         EventAssetPublishedAt(now, name, publisher);
     }
     
@@ -54,39 +49,28 @@ contract Asset {
     
     // Transfer //
 
-    function transfer(address _receiver) public onlyHolder(msg.sender) isAvail() {
+    function transfer(address _receiver) public onlyHolder(msg.sender) onlyAvail() {
         holder = _receiver;
         EventAssetTransferredAt(now, name, holder);
     }
 
     // Updator //
     
-    function updateStatus(string _status) public {
-        status = _status;
-        EventAssetUpdatedAt(now, name, status);
-    }
-    
     function updateName(string _name) public {
         name = _name;
-        EventAssetUpdatedAt(now, name, status);
+        EventAssetUpdatedAt(now, name, status[availStatusID]);
     }
     
-    // Setter //
-    
-    function setNotAvail() public onlyHolder(msg.sender) {
-        avail = false;
-    }
-    
-    function setAvail() public onlyHolder(msg.sender) {
-        avail = true;
+    function updateAvailStatus(uint8 statusID) public onlyHolder(msg.sender) {
+        availStatusID = statusID;
+        EventAssetUpdatedAt(now, name, status[statusID]);
     }
     
     // Remover //
     
     function remove() public onlyPublisher(msg.sender) {
-        avail = false;
+        availStatusID = 2; // status: Removed
         holder = publisher;
-        status = "Removed";
         EventAssetRemovedAt(now, name);
     }
 
