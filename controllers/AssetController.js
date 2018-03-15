@@ -186,7 +186,7 @@ exports.transfer = async function(req, res) {
         await assetInstance.transfer(receiver, {from: test_account});
 
         response = {
-            "message": "success"
+            "message": "Success: transfer ID(" + assetId + ") receiver(" + receiver + ")"
         }
         
     } catch (error) {
