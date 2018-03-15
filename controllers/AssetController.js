@@ -97,7 +97,7 @@ exports.info = async function(req, res) {
         console.log(assetCondition);
 
         var assetAvail = await assetInstance.availStatusID.call({from: test_account});
-        console.log(assetAvail);
+        console.log(assetAvail.toNumber());
 
         var assetHolder = await assetInstance.holder.call({from: test_account});
         console.log(assetHolder);
@@ -138,8 +138,8 @@ exports.update = async function(req, res) {
         var assetId = req.body.id;
         console.log(assetId);
 
-        var newStatus = req.body.status;
-        console.log("Received: ", newStatus);
+        var newCondition = req.body.condition;
+        console.log("Received: ", newCondition);
 
         var assetAddress = await custodianInstance.getAssetAddrByID(assetId, {from: test_account});
         console.log(assetAddress);
@@ -147,10 +147,10 @@ exports.update = async function(req, res) {
         var assetInstance = Asset.at(assetAddress);
         console.log("asset is ok");
 
-        await assetInstance.updateStatus(newStatus, {from: test_account});
+        await assetInstance.updateCondition(newCondition, {from: test_account});
 
         response = {
-            "message": "success"
+            "message": "Success: update ID(" + assetId + ") condition(" + newCondition + ")"
         }
         
     } catch (error) {
