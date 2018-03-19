@@ -1,5 +1,8 @@
 # Iodine Backend
 
+# Before start
+`npm install` 
+
 ## Start API server
 `nodemon ./bin/www`
 
