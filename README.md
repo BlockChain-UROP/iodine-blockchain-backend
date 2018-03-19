@@ -16,6 +16,7 @@ id: <asset-ID>,
 condition: "new condition"
 ```
 ### Transfer
+* Note that assets cannot be double transferred
 `POST http://localhost:3000/asset/transfer`
 ```
 id: <asset-ID>
