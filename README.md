@@ -1,10 +1,14 @@
 # Iodine Backend
 
-# Before start
+## General usage
+Currently deployed on Heroku: https://iodine.herokuapp.com
+
+## For Development
+## Before start
 `npm install` 
 
 ## Start API server
-`nodemon ./bin/www`
+`nodemon ./bin/www` or `npm start`
 
 ## Request Format
 ### Get Info
